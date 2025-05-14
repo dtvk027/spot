@@ -35,10 +35,10 @@
       let destination = "";
       let url = "";
 
-      // Naive classifier for routing to different AI tools based on the prompt
+      // Naive classifier (replace with GPT later)
       if (/(code|bug|function|debug|javascript|python)/i.test(prompt)) {
-        destination = "GitHub Copilot";
-        url = "https://github.com/copilot";
+        destination = "CodeLlama on HuggingFace";
+        url = "https://huggingface.co/spaces/codellama/CodeLlama-7b-Instruct";
       } else if (/(research|sources|latest|summary)/i.test(prompt)) {
         destination = "Perplexity AI";
         url = `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}`;
@@ -53,7 +53,6 @@
         url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
       }
 
-      // Display destination and link
       routeTo.innerText = destination;
       link.href = url;
       link.classList.remove("hidden");
