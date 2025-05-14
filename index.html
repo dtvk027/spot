@@ -9,54 +9,71 @@
 <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col items-center justify-center p-4">
   <div class="w-full max-w-2xl">
     <h1 class="text-3xl font-bold mb-4 text-center">🚀 Spot — Smart AI Router</h1>
-    <p class="text-center text-gray-600 mb-6">Enter any question and Spot will decide which AI tool is best for it.</p>
+    <p class="text-center text-gray-600 mb-6">Enter any question and Spot will decide which AI tool is best and fetch the answer using OpenRouter.</p>
 
     <textarea id="prompt" rows="5" placeholder="Type your prompt here..." class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-    <button onclick="routePrompt()" class="w-full mt-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl">🔍 Ask Spot</button>
+    <button id="askBtn" class="w-full mt-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl">🔍 Ask Spot</button>
 
     <div id="result" class="mt-6 p-4 bg-white rounded-xl shadow hidden">
-      <h2 class="text-xl font-semibold mb-2">📤 Routed To:</h2>
-      <p id="routeTo" class="text-blue-600 font-mono"></p>
-      <div class="mt-4">
-        <a id="externalLink" href="#" target="_blank" class="text-blue-500 underline hidden">Go to response</a>
-      </div>
+      <h2 class="text-xl font-semibold mb-2">💬 Answer:</h2>
+      <pre id="responseText" class="whitespace-pre-wrap text-gray-800"></pre>
     </div>
   </div>
 
   <script>
-    function routePrompt() {
-      const prompt = document.getElementById("prompt").value.trim();
-      const routeTo = document.getElementById("routeTo");
-      const resultBox = document.getElementById("result");
-      const link = document.getElementById("externalLink");
+    const openRouterKey = 'YOUR_OPENROUTER_API_KEY'; // replace with your OpenRouter key
+    const modelMap = {
+      code: 'codellama-7b',
+      research: 'claude-3.5-sonnet',
+      creative: 'gpt-3.5-turbo',
+      general: 'gpt-3.5-turbo'
+    };
 
+    document.getElementById('askBtn').addEventListener('click', routePrompt);
+
+    async function routePrompt() {
+      const prompt = document.getElementById('prompt').value.trim();
+      const resultBox = document.getElementById('result');
+      const responseText = document.getElementById('responseText');
       if (!prompt) return;
 
-      let destination = "";
-      let url = "";
-
-      // Naive classifier (replace with GPT later)
+      // Determine category
+      let category;
       if (/(code|bug|function|debug|javascript|python)/i.test(prompt)) {
-        destination = "CodeLlama on HuggingFace";
-        url = "https://huggingface.co/spaces/codellama/CodeLlama-7b-Instruct";
-      } else if (/(research|sources|latest|summary)/i.test(prompt)) {
-        destination = "Perplexity AI";
-        url = `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}`;
+        category = 'code';
+      } else if (/(research|sources|latest|summary|article)/i.test(prompt)) {
+        category = 'research';
       } else if (/(story|idea|creative|plot|write|draw)/i.test(prompt)) {
-        destination = "GPT-3.5 (OpenRouter)";
-        url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
-      } else if (/(long|analyze|summarize|document|context)/i.test(prompt)) {
-        destination = "Claude on Poe";
-        url = `https://poe.com/Claude`;
+        category = 'creative';
       } else {
-        destination = "GPT-3.5 (General Chat)";
-        url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
+        category = 'general';
       }
 
-      routeTo.innerText = destination;
-      link.href = url;
-      link.classList.remove("hidden");
-      resultBox.classList.remove("hidden");
+      const model = modelMap[category];
+
+      // Call OpenRouter
+      responseText.textContent = 'Loading...';
+      resultBox.classList.remove('hidden');
+
+      try {
+        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${openRouterKey}`
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [{ role: 'user', content: prompt }]
+          })
+        });
+        const data = await res.json();
+        const reply = data.choices?.[0]?.message?.content || 'No response.';
+        responseText.textContent = reply.trim();
+      } catch (err) {
+        console.error(err);
+        responseText.textContent = 'Error fetching response.';
+      }
     }
   </script>
 </body>
