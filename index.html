@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spot — Ultimate AI Router</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spot — Smart AI Router</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -14,435 +14,117 @@
         <i class="fas fa-robot text-blue-600 text-3xl"></i>
       </div>
       <h1 class="text-3xl font-bold mb-2 text-blue-600">Spot AI Router</h1>
-      <p class="text-gray-600">Enter any question and Spot will intelligently route it to the best AI tool</p>
+      <p class="text-gray-600">The smartest way to find the perfect AI tool</p>
     </div>
 
     <div class="relative mb-4">
       <textarea 
         id="prompt" 
         rows="5" 
-        placeholder="Examples:
-• Debug this Python code
-• Explain quantum physics simply
-• Find research papers on AI ethics
-• Write a poem about the ocean
-• Solve this calculus problem
-• Analyze this business case" 
+        placeholder="Type your question or task here..." 
         class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm transition-all duration-200 resize-none"
       ></textarea>
-      <div class="absolute bottom-3 right-3 flex items-center">
-        <span id="charCount" class="text-gray-400 text-sm mr-2">0/2000</span>
-        <button id="clearBtn" class="text-gray-400 hover:text-gray-600">
-          <i class="fas fa-times-circle"></i>
-        </button>
-      </div>
     </div>
     
-    <div class="flex gap-3">
-      <button onclick="routePrompt()" class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition-colors flex items-center justify-center">
-        <i class="fas fa-paper-plane mr-2"></i> Ask Spot
-      </button>
-      <button onclick="showExamples()" class="py-3 px-4 bg-white border border-gray-300 text-gray-700 font-semibold rounded-xl shadow-sm hover:shadow-md transition-all flex items-center justify-center">
-        <i class="fas fa-lightbulb mr-2"></i> Examples
-      </button>
-    </div>
+    <button onclick="routePrompt()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition-colors">
+      <i class="fas fa-paper-plane mr-2"></i> Find Best AI Tool
+    </button>
 
     <div id="result" class="mt-8 p-6 bg-white rounded-xl shadow-lg hidden">
-      <div class="flex items-start mb-4">
+      <div class="flex items-start">
         <div class="bg-blue-100 p-2 rounded-lg mr-3">
           <i class="fas fa-route text-blue-600"></i>
         </div>
         <div>
-          <h2 class="text-xl font-semibold mb-1">Best AI for your query:</h2>
+          <h2 class="text-xl font-semibold mb-1">Recommended Tool:</h2>
           <div id="routeTo" class="text-lg font-medium text-blue-600 mb-2"></div>
           <div id="reasoning" class="text-gray-600 mb-4"></div>
-          <div class="flex flex-wrap gap-3">
-            <a id="externalLink" href="#" target="_blank" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center">
-              <i class="fas fa-external-link-alt mr-2"></i> Go to response
-            </a>
-            <button onclick="copyPrompt()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg flex items-center">
-              <i class="fas fa-copy mr-2"></i> Copy prompt
-            </button>
-            <button onclick="showAlternatives()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg flex items-center">
-              <i class="fas fa-random mr-2"></i> Alternatives
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <div id="confidenceMeter" class="mt-4 bg-gray-100 rounded-full h-2">
-        <div id="confidenceBar" class="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full" style="width: 0%"></div>
-      </div>
-      <div class="text-right text-sm text-gray-500 mt-1">
-        <span id="confidenceValue">0%</span> confidence
-      </div>
-    </div>
-
-    <div id="examplesModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
-      <div class="bg-white rounded-xl shadow-lg max-w-md w-full p-6">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-bold">Example Prompts</h3>
-          <button onclick="hideExamples()" class="text-gray-400 hover:text-gray-600">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="space-y-3">
-          <div class="p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100" onclick="useExample('How can I fix this Python code that keeps giving a IndexError?')">
-            <p class="font-medium">Code Help</p>
-            <p class="text-sm text-gray-600">"How can I fix this Python code that keeps giving a IndexError?"</p>
-          </div>
-          <div class="p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100" onclick="useExample('Explain special relativity to a 10 year old')">
-            <p class="font-medium">Explanation</p>
-            <p class="text-sm text-gray-600">"Explain special relativity to a 10 year old"</p>
-          </div>
-          <div class="p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100" onclick="useExample('Write a short story about a robot who learns to love')">
-            <p class="font-medium">Creative Writing</p>
-            <p class="text-sm text-gray-600">"Write a short story about a robot who learns to love"</p>
-          </div>
-          <div class="p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100" onclick="useExample('What are the latest breakthroughs in battery technology?')">
-            <p class="font-medium">Research</p>
-            <p class="text-sm text-gray-600">"What are the latest breakthroughs in battery technology?"</p>
-          </div>
-          <div class="p-3 bg-red-50 rounded-lg cursor-pointer hover:bg-red-100" onclick="useExample('Solve this calculus problem: Find the derivative of f(x) = 3x^2 + 2x - 5')">
-            <p class="font-medium">Math Problem</p>
-            <p class="text-sm text-gray-600">"Solve this calculus problem: Find the derivative of f(x) = 3x^2 + 2x - 5"</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="alternativesModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
-      <div class="bg-white rounded-xl shadow-lg max-w-md w-full p-6">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-bold">Alternative Tools</h3>
-          <button onclick="hideAlternatives()" class="text-gray-400 hover:text-gray-600">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div id="alternativesList" class="space-y-3">
-          <!-- Alternatives will be inserted here -->
+          <a id="externalLink" href="#" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+            <i class="fas fa-external-link-alt mr-2"></i> Go to Tool
+          </a>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // DOM Elements
-    const promptTextarea = document.getElementById('prompt');
-    const charCount = document.getElementById('charCount');
-    
-    // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
-      // Character counter
-      promptTextarea.addEventListener('input', () => {
-        const count = promptTextarea.value.length;
-        charCount.textContent = `${count}/2000`;
-        if (count > 1800) {
-          charCount.classList.add('text-red-500');
-        } else {
-          charCount.classList.remove('text-red-500');
-        }
-      });
-      
-      // Clear button
-      document.getElementById('clearBtn').addEventListener('click', () => {
-        promptTextarea.value = '';
-        charCount.textContent = '0/2000';
-      });
-      
-      // Allow Enter to submit (Shift+Enter for new line)
-      promptTextarea.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          routePrompt();
-        }
-      });
-    });
-    
-    // Example prompts
-    function showExamples() {
-      document.getElementById('examplesModal').classList.remove('hidden');
-    }
-    
-    function hideExamples() {
-      document.getElementById('examplesModal').classList.add('hidden');
-    }
-    
-    function useExample(text) {
-      promptTextarea.value = text;
-      promptTextarea.dispatchEvent(new Event('input'));
-      hideExamples();
-      promptTextarea.focus();
-    }
-    
-    // Copy prompt
-    function copyPrompt() {
-      const prompt = document.getElementById("prompt").value;
-      navigator.clipboard.writeText(prompt).then(() => {
-        alert("Prompt copied to clipboard!");
-      });
-    }
-    
-    // Show alternatives
-    function showAlternatives() {
-      const prompt = document.getElementById("prompt").value.trim();
-      const alternativesList = document.getElementById("alternativesList");
-      
-      // Get alternatives from analysis
-      const { alternatives } = analyzePrompt(prompt, true);
-      
-      // Display alternatives
-      alternativesList.innerHTML = alternatives.map(alt => `
-        <div class="p-3 bg-gray-50 rounded-lg">
-          <div class="font-medium">${alt.tool}</div>
-          <div class="text-sm text-gray-600 mb-2">${alt.reason}</div>
-          <a href="${alt.url}" target="_blank" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg inline-flex items-center">
-            <i class="fas fa-external-link-alt mr-1"></i> Try it
-          </a>
-        </div>
-      `).join('');
-      
-      document.getElementById("alternativesModal").classList.remove('hidden');
-    }
-    
-    function hideAlternatives() {
-      document.getElementById("alternativesModal").classList.add('hidden');
-    }
-    
-    // Smart prompt analysis with multi-tier routing
-    function analyzePrompt(prompt, getAlternatives = false) {
+    // Smart routing logic - considers multiple dimensions
+    function analyzePrompt(prompt) {
       const lowerPrompt = prompt.toLowerCase();
-      let destination, url, explanation, confidence;
-      let alternatives = [];
       
-      // 1. Technical/Code Questions
-      if (/(code|programming|script|algorithm|function|method|class|variable)/i.test(lowerPrompt)) {
-        // Debugging specific errors
-        if (/(error|bug|fix|issue|exception|traceback)/i.test(lowerPrompt)) {
-          destination = "Cursor IDE (AI Debugger)";
-          url = `https://www.cursor.com`;
-          explanation = "Cursor's AI debugger can analyze stack traces and suggest fixes in your actual codebase.";
-          confidence = 94;
-          
-          alternatives.push({
-            tool: "Perplexity Copilot",
-            reason: "For error analysis with web references and documentation",
-            url: `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}&copilot=true`
-          });
+      // 1. Coding/Technical Questions
+      if (/(code|programming|debug|fix|error|syntax|algorithm)/i.test(prompt)) {
+        if (/(error|bug|fix|exception)/i.test(prompt)) {
+          return {
+            tool: "Cursor IDE",
+            reason: "Best for debugging with direct code analysis",
+            url: "https://www.cursor.com"
+          };
         }
-        // Code optimization
-        else if (/(optimiz|improve|efficient|performance|speed up)/i.test(lowerPrompt)) {
-          destination = "GitHub Copilot X";
-          url = `https://github.com/features/copilot`;
-          explanation = "Copilot X provides advanced code optimization suggestions with context from your entire repo.";
-          confidence = 90;
-          
-          alternatives.push({
-            tool: "Codeium",
-            reason: "Alternative code optimization tool with free tier",
-            url: `https://codeium.com`
-          });
-        }
-        // General coding help
-        else {
-          destination = "Phind (Developer Mode)";
-          url = `https://www.phind.com/search?q=${encodeURIComponent(prompt)}`;
-          explanation = "Phind specializes in developer questions with code examples and best practices.";
-          confidence = 88;
-        }
+        return {
+          tool: "GitHub Copilot",
+          reason: "Ideal for coding assistance and autocomplete",
+          url: "https://github.com/features/copilot"
+        };
       }
       
-      // 2. Research/Sources Needed
-      else if (/(research|study|paper|article|source|reference|citation|journal)/i.test(lowerPrompt)) {
-        // Academic/scientific research
-        if (/(academic|scientific|peer-reviewed|journal)/i.test(lowerPrompt)) {
-          destination = "Elicit AI";
-          url = `https://elicit.com/search?q=${encodeURIComponent(prompt)}`;
-          explanation = "Elicit specializes in finding and summarizing academic papers with proper citations.";
-          confidence = 93;
-          
-          alternatives.push({
-            tool: "Perplexity Pro",
-            reason: "For general research with web sources",
-            url: `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}`
-          });
-        }
-        // General research
-        else {
-          destination = "Perplexity Pro";
-          url = `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}`;
-          explanation = "Perplexity finds and synthesizes information from high-quality web sources.";
-          confidence = 91;
-        }
+      // 2. Research/Information
+      if (/(research|study|paper|article|source)/i.test(prompt)) {
+        return {
+          tool: "Perplexity Pro",
+          reason: "Excellent for finding and summarizing reliable sources",
+          url: `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}`
+        };
       }
       
       // 3. Creative Writing
-      else if (/(write|create|story|poem|song|script|narrative|fiction|plot)/i.test(lowerPrompt)) {
-        // Poetry/lyrical content
-        if (/(poem|poetry|song|lyric|rhyme|verse)/i.test(lowerPrompt)) {
-          destination = "Claude 3 Opus";
-          url = `https://poe.com/Claude-3`;
-          explanation = "Claude 3 produces more nuanced and creative lyrical content with better flow.";
-          confidence = 89;
-        }
-        // Long-form content
-        else if (/(story|novel|chapter|book|narrative)/i.test(lowerPrompt)) {
-          destination = "Sudowrite";
-          url = `https://www.sudowrite.com`;
-          explanation = "Sudowrite specializes in long-form creative writing with advanced storytelling features.";
-          confidence = 87;
-          
-          alternatives.push({
-            tool: "GPT-4 Turbo",
-            reason: "For general creative writing with 128k context",
-            url: `https://chat.openai.com/?model=gpt-4-turbo&q=${encodeURIComponent(prompt)}`
-          });
-        }
-        // General creative
-        else {
-          destination = "GPT-4 Turbo";
-          url = `https://chat.openai.com/?model=gpt-4-turbo&q=${encodeURIComponent(prompt)}`;
-          explanation = "GPT-4 Turbo provides excellent creative writing with large context window.";
-          confidence = 90;
-        }
+      if (/(write|story|poem|creative|script)/i.test(prompt)) {
+        return {
+          tool: "Claude 3",
+          reason: "Superior for creative writing and storytelling",
+          url: "https://claude.ai"
+        };
       }
       
-      // 4. Math/Logic Problems
-      else if (/(math|calculate|solve|equation|formula|theorem|proof|logic|puzzle)/i.test(lowerPrompt)) {
-        // Advanced math
-        if (/(calculus|linear algebra|differential|integral|matrix)/i.test(lowerPrompt)) {
-          destination = "Wolfram Alpha Pro";
-          url = `https://www.wolframalpha.com/pro`;
-          explanation = "Wolfram Alpha provides step-by-step solutions to advanced math problems.";
-          confidence = 97;
-        }
-        // General math
-        else {
-          destination = "Symbolab";
-          url = `https://www.symbolab.com/solver/${encodeURIComponent(prompt)}`;
-          explanation = "Symbolab offers detailed step-by-step solutions to math problems.";
-          confidence = 95;
-          
-          alternatives.push({
-            tool: "Wolfram Alpha",
-            reason: "Alternative for symbolic math computation",
-            url: `https://www.wolframalpha.com/input?i=${encodeURIComponent(prompt)}`
-          });
-        }
+      // 4. Math/Logic
+      if (/(math|calculate|solve|equation|formula)/i.test(prompt)) {
+        return {
+          tool: "Wolfram Alpha",
+          reason: "The best for mathematical computations",
+          url: `https://www.wolframalpha.com/input?i=${encodeURIComponent(prompt)}`
+        };
       }
       
       // 5. Business/Professional
-      else if (/(business|market|strategy|analysis|financial|startup|invest|funding)/i.test(lowerPrompt)) {
-        // Financial analysis
-        if (/(financial|valuation|stock|invest|funding)/i.test(lowerPrompt)) {
-          destination = "BloombergGPT";
-          url = `https://www.bloomberg.com/professional/solution/bloomberg-terminal/`;
-          explanation = "BloombergGPT specializes in financial and market analysis.";
-          confidence = 85;
-        }
-        // General business
-        else {
-          destination = "Claude 3 Opus";
-          url = `https://poe.com/Claude-3`;
-          explanation = "Claude 3 excels at business strategy and professional writing.";
-          confidence = 88;
-        }
+      if (/(business|market|strategy|financial|analysis)/i.test(prompt)) {
+        return {
+          tool: "Claude 3",
+          reason: "Great for business analysis and strategy",
+          url: "https://claude.ai"
+        };
       }
       
-      // 6. Default/General Knowledge
-      else {
-        // Simple explanations
-        if (/(explain|what is|how does|define)/i.test(lowerPrompt) && /(simple|basic|child|kid|layman)/i.test(lowerPrompt)) {
-          destination = "GPT-3.5";
-          url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
-          explanation = "GPT-3.5 provides clear, concise explanations for simple queries.";
-          confidence = 86;
-        }
-        // Complex explanations
-        else if (/(explain|analyze|discuss|compare)/i.test(lowerPrompt)) {
-          destination = "Claude 3 Sonnet";
-          url = `https://poe.com/Claude-3-Sonnet`;
-          explanation = "Claude 3 provides well-reasoned, nuanced explanations.";
-          confidence = 89;
-        }
-        // General chat
-        else {
-          destination = "GPT-4 Turbo";
-          url = `https://chat.openai.com/?model=gpt-4-turbo&q=${encodeURIComponent(prompt)}`;
-          explanation = "GPT-4 Turbo handles general queries with excellent reasoning.";
-          confidence = 87;
-        }
-      }
-      
-      // Add standard alternatives if not already included
-      if (!alternatives.some(alt => alt.tool.includes("GPT-4"))) {
-        alternatives.push({
-          tool: "GPT-4 Turbo",
-          reason: "General purpose AI with strong all-around capabilities",
-          url: `https://chat.openai.com/?model=gpt-4-turbo&q=${encodeURIComponent(prompt)}`
-        });
-      }
-      
-      if (!alternatives.some(alt => alt.tool.includes("Claude"))) {
-        alternatives.push({
-          tool: "Claude 3 Opus",
-          reason: "Excellent for nuanced reasoning and long documents",
-          url: `https://poe.com/Claude-3`
-        });
-      }
-      
-      if (getAlternatives) {
-        return { alternatives };
-      } else {
-        return { destination, url, explanation, confidence, alternatives };
-      }
+      // Default - General Knowledge
+      return {
+        tool: "GPT-4 Turbo",
+        reason: "Best all-purpose AI for general questions",
+        url: `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`
+      };
     }
-    
-    // Main routing function
+
     function routePrompt() {
       const prompt = document.getElementById("prompt").value.trim();
-      const routeTo = document.getElementById("routeTo");
-      const reasoning = document.getElementById("reasoning");
-      const resultBox = document.getElementById("result");
-      const link = document.getElementById("externalLink");
-      const confidenceBar = document.getElementById("confidenceBar");
-      const confidenceValue = document.getElementById("confidenceValue");
-
       if (!prompt) {
-        alert("Please enter a prompt first!");
+        alert("Please enter your question first!");
         return;
       }
 
-      // Reset UI
-      resultBox.classList.add('hidden');
-      confidenceBar.style.width = '0%';
-      confidenceValue.textContent = '0%';
+      const result = analyzePrompt(prompt);
       
-      // Show loading state
-      routeTo.textContent = "Analyzing your query...";
-      reasoning.textContent = "";
-      resultBox.classList.remove('hidden');
-      
-      // Simulate analysis delay
-      setTimeout(() => {
-        const { destination, url, explanation, confidence } = analyzePrompt(prompt);
-        
-        // Update UI
-        routeTo.textContent = destination;
-        reasoning.textContent = explanation;
-        link.href = url;
-        
-        // Animate confidence meter
-        let currentConfidence = 0;
-        const interval = setInterval(() => {
-          currentConfidence += 2;
-          confidenceBar.style.width = `${currentConfidence}%`;
-          confidenceValue.textContent = `${currentConfidence}%`;
-          if (currentConfidence >= confidence) {
-            clearInterval(interval);
-          }
-        }, 20);
-      }, 800);
+      document.getElementById("routeTo").textContent = result.tool;
+      document.getElementById("reasoning").textContent = result.reason;
+      document.getElementById("externalLink").href = result.url;
+      document.getElementById("result").classList.remove("hidden");
     }
   </script>
 </body>
