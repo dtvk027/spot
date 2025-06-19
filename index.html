@@ -5,59 +5,254 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spot — Smart AI Router</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col items-center justify-center p-4">
-  <div class="w-full max-w-2xl">
-    <h1 class="text-3xl font-bold mb-4 text-center">🚀 Spot — Smart AI Router</h1>
-    <p class="text-center text-gray-600 mb-6">Enter any question and Spot will decide which AI tool is best for it.</p>
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 text-gray-900 min-h-screen flex flex-col items-center justify-center p-4">
+  <div class="w-full max-w-3xl">
+    <div class="text-center mb-8">
+      <div class="inline-block bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-2xl shadow-lg mb-4">
+        <i class="fas fa-robot text-white text-4xl"></i>
+      </div>
+      <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Spot AI Router</h1>
+      <p class="text-lg text-gray-600 max-w-lg mx-auto">Your intelligent gateway to the best AI tools for any task. Just ask, and Spot will find the perfect assistant.</p>
+    </div>
 
-    <textarea id="prompt" rows="5" placeholder="Type your prompt here..." class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-    <button onclick="routePrompt()" class="w-full mt-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl">🔍 Ask Spot</button>
+    <div class="relative mb-4">
+      <textarea 
+        id="prompt" 
+        rows="5" 
+        placeholder="What would you like to know? Examples:
+• 'Explain quantum computing like I'm 5'
+• 'Debug this Python code for me'
+• 'Find recent research on AI ethics'
+• 'Help me write a short story about robots'" 
+        class="w-full p-5 rounded-2xl border-2 border-gray-200 focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-blue-400 shadow-sm transition-all duration-200 resize-none"
+      ></textarea>
+      <div class="absolute bottom-4 right-4 flex items-center">
+        <span id="charCount" class="text-gray-400 text-sm mr-3">0/2000</span>
+        <button id="clearBtn" class="text-gray-400 hover:text-gray-600 transition-colors">
+          <i class="fas fa-times-circle text-xl"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row gap-3">
+      <button onclick="routePrompt()" class="flex-1 py-3 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center">
+        <i class="fas fa-paper-plane mr-2"></i> Ask Spot
+      </button>
+      <button onclick="showExamples()" class="py-3 px-6 bg-white border-2 border-gray-200 hover:border-blue-400 text-gray-700 font-semibold rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center">
+        <i class="fas fa-lightbulb mr-2"></i> Examples
+      </button>
+    </div>
 
-    <div id="result" class="mt-6 p-4 bg-white rounded-xl shadow hidden">
-      <h2 class="text-xl font-semibold mb-2">📤 Routed To:</h2>
-      <p id="routeTo" class="text-blue-600 font-mono"></p>
-      <div class="mt-4">
-        <a id="externalLink" href="#" target="_blank" class="text-blue-500 underline hidden">Go to response</a>
+    <div id="result" class="mt-8 p-6 bg-white rounded-2xl shadow-lg hidden animate__animated animate__fadeIn">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-blue-100 p-3 rounded-lg">
+          <i class="fas fa-route text-blue-600 text-2xl"></i>
+        </div>
+        <div class="ml-4">
+          <h2 class="text-xl font-semibold mb-1">Best AI for your query:</h2>
+          <div id="routeTo" class="text-lg font-medium text-blue-600 mb-3"></div>
+          <p id="reasoning" class="text-gray-600 mb-4"></p>
+          <div class="flex flex-wrap gap-3">
+            <a id="externalLink" href="#" target="_blank" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow transition-colors duration-200 flex items-center">
+              <i class="fas fa-external-link-alt mr-2"></i> Go to response
+            </a>
+            <button onclick="copyPrompt()" id="copyBtn" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg shadow transition-colors duration-200 flex items-center">
+              <i class="fas fa-copy mr-2"></i> Copy prompt
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="examplesModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+      <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate__animated animate__zoomIn">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">Example Prompts</h3>
+          <button onclick="hideExamples()" class="text-gray-400 hover:text-gray-600">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <div class="space-y-3">
+          <div class="p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors" onclick="useExample('How can I optimize this React component for better performance?')">
+            <p class="font-medium text-blue-700">Code Optimization</p>
+            <p class="text-sm text-gray-600">"How can I optimize this React component for better performance?"</p>
+          </div>
+          <div class="p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100 transition-colors" onclick="useExample('Summarize the latest research on large language models with sources')">
+            <p class="font-medium text-purple-700">Research Summary</p>
+            <p class="text-sm text-gray-600">"Summarize the latest research on large language models with sources"</p>
+          </div>
+          <div class="p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition-colors" onclick="useExample('Write a short story about a detective in 22nd century Tokyo')">
+            <p class="font-medium text-green-700">Creative Writing</p>
+            <p class="text-sm text-gray-600">"Write a short story about a detective in 22nd century Tokyo"</p>
+          </div>
+          <div class="p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors" onclick="useExample('Explain how neural networks work to a high school student')">
+            <p class="font-medium text-yellow-700">Education</p>
+            <p class="text-sm text-gray-600">"Explain how neural networks work to a high school student"</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
+  <footer class="mt-12 text-center text-gray-500 text-sm">
+    <p>Spot AI Router v1.1 · Not affiliated with any AI providers</p>
+  </footer>
+
   <script>
+    // Character counter
+    const promptTextarea = document.getElementById('prompt');
+    const charCount = document.getElementById('charCount');
+    
+    promptTextarea.addEventListener('input', () => {
+      const count = promptTextarea.value.length;
+      charCount.textContent = `${count}/2000`;
+      
+      if (count > 1800) {
+        charCount.classList.add('text-red-500');
+      } else {
+        charCount.classList.remove('text-red-500');
+      }
+    });
+    
+    // Clear button
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      promptTextarea.value = '';
+      charCount.textContent = '0/2000';
+      charCount.classList.remove('text-red-500');
+    });
+    
+    // Example prompts
+    function showExamples() {
+      document.getElementById('examplesModal').classList.remove('hidden');
+    }
+    
+    function hideExamples() {
+      document.getElementById('examplesModal').classList.add('hidden');
+    }
+    
+    function useExample(text) {
+      promptTextarea.value = text;
+      promptTextarea.dispatchEvent(new Event('input'));
+      hideExamples();
+      promptTextarea.focus();
+    }
+    
+    // Copy prompt
+    function copyPrompt() {
+      const prompt = document.getElementById("prompt").value;
+      navigator.clipboard.writeText(prompt).then(() => {
+        const copyBtn = document.getElementById("copyBtn");
+        copyBtn.innerHTML = '<i class="fas fa-check mr-2"></i> Copied!';
+        copyBtn.classList.remove('bg-gray-100', 'hover:bg-gray-200');
+        copyBtn.classList.add('bg-green-100', 'hover:bg-green-200', 'text-green-700');
+        setTimeout(() => {
+          copyBtn.innerHTML = '<i class="fas fa-copy mr-2"></i> Copy prompt';
+          copyBtn.classList.remove('bg-green-100', 'hover:bg-green-200', 'text-green-700');
+          copyBtn.classList.add('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
+        }, 2000);
+      });
+    }
+    
+    // Improved routing logic
     function routePrompt() {
       const prompt = document.getElementById("prompt").value.trim();
       const routeTo = document.getElementById("routeTo");
+      const reasoning = document.getElementById("reasoning");
       const resultBox = document.getElementById("result");
       const link = document.getElementById("externalLink");
 
-      if (!prompt) return;
-
-      let destination = "";
-      let url = "";
-
-      // Naive classifier (replace with GPT later)
-      if (/(code|bug|function|debug|javascript|python)/i.test(prompt)) {
-        destination = "Perplexity AI (Copilot)";
-        url = `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}&copilot=true`;
-      } else if (/(research|sources|latest|summary)/i.test(prompt)) {
-        destination = "Perplexity AI";
-        url = `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}`;
-      } else if (/(story|idea|creative|plot|write|draw)/i.test(prompt)) {
-        destination = "GPT-3.5 (OpenRouter)";
-        url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
-      } else if (/(long|analyze|summarize|document|context)/i.test(prompt)) {
-        destination = "Claude on Poe";
-        url = `https://poe.com/Claude`;
-      } else {
-        destination = "GPT-3.5 (General Chat)";
-        url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
+      if (!prompt) {
+        alert("Please enter a prompt first!");
+        return;
       }
 
-      routeTo.innerText = destination;
-      link.href = url;
-      link.classList.remove("hidden");
-      resultBox.classList.remove("hidden");
+      // Reset result box
+      resultBox.classList.add('hidden');
+      
+      // Show loading state
+      routeTo.innerHTML = '<span class="animate-pulse">Analyzing your query...</span>';
+      reasoning.textContent = '';
+      resultBox.classList.remove('hidden');
+      
+      // Simulate analysis delay (in a real app, this would be an API call)
+      setTimeout(() => {
+        const { destination, url, explanation } = analyzePrompt(prompt);
+        
+        routeTo.textContent = destination;
+        reasoning.textContent = explanation;
+        link.href = url;
+        
+        // Add appropriate icon based on destination
+        let iconClass = 'fas fa-robot'; // default icon
+        if (destination.includes('Perplexity')) iconClass = 'fas fa-search';
+        if (destination.includes('Claude')) iconClass = 'fas fa-brain';
+        if (destination.includes('GPT')) iconClass = 'fas fa-comment-alt';
+        
+        routeTo.innerHTML = `<i class="${iconClass} mr-2"></i>${destination}`;
+      }, 800);
     }
+    
+    // Enhanced prompt analysis
+    function analyzePrompt(prompt) {
+      const lowerPrompt = prompt.toLowerCase();
+      let destination, url, explanation;
+      
+      // Coding/technical questions
+      if (/(code|bug|function|debug|javascript|python|react|optimiz|algorithm|syntax|error)/i.test(lowerPrompt)) {
+        destination = "Perplexity AI (Copilot)";
+        url = `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}&copilot=true`;
+        explanation = "This appears to be a technical/coding question. Perplexity's Copilot mode is great for debugging and code explanations with its ability to execute code snippets.";
+      } 
+      // Research/sources needed
+      else if (/(research|sources|latest|summary|studies|paper|article|journal|cite|reference)/i.test(lowerPrompt)) {
+        destination = "Perplexity AI";
+        url = `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}`;
+        explanation = "Your question seems to require sourced information. Perplexity excels at finding and summarizing information from reliable sources across the web.";
+      } 
+      // Creative writing
+      else if (/(story|idea|creative|plot|write|poem|song|script|narrative|fiction)/i.test(lowerPrompt)) {
+        destination = "GPT-4 (OpenRouter)";
+        url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
+        explanation = "This looks like a creative writing prompt. GPT-4 typically produces more imaginative and coherent creative content than other models.";
+      } 
+      // Long-form analysis
+      else if (/(analyze|summarize|document|context|lengthy|detailed|comprehensive|compare|contrast)/i.test(lowerPrompt)) {
+        destination = "Claude 3 (Poe)";
+        url = `https://poe.com/Claude-3`;
+        explanation = "For in-depth analysis or long document processing, Claude's 100K+ context window makes it ideal for complex reasoning tasks.";
+      } 
+      // General knowledge/explanation
+      else if (/(explain|what is|how does|who was|why does|define|meaning)/i.test(lowerPrompt)) {
+        destination = "GPT-3.5 (General Chat)";
+        url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
+        explanation = "This seems to be a general knowledge question. GPT-3.5 provides fast, accurate responses for common questions at no cost.";
+      }
+      // Math/logic problems
+      else if (/(math|calculate|solve|equation|formula|theorem|proof|logic|puzzle)/i.test(lowerPrompt)) {
+        destination = "Wolfram Alpha";
+        url = `https://www.wolframalpha.com/input?i=${encodeURIComponent(prompt)}`;
+        explanation = "Your question appears to be mathematical or computational. Wolfram Alpha specializes in solving math problems and performing calculations.";
+      }
+      // Default case
+      else {
+        destination = "GPT-4 (General Chat)";
+        url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
+        explanation = "This seems to be a general question. GPT-4 provides well-rounded answers for most types of queries.";
+      }
+      
+      return { destination, url, explanation };
+    }
+    
+    // Allow pressing Enter with Shift to submit
+    promptTextarea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        routePrompt();
+      }
+    });
   </script>
 </body>
 </html>
