@@ -3,128 +3,763 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spot — Smart AI Router</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Spot — Advanced AI Router</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col items-center justify-center p-4">
-  <div class="w-full max-w-2xl">
-    <div class="text-center mb-8">
-      <div class="inline-block bg-blue-100 p-3 rounded-xl mb-4">
-        <i class="fas fa-robot text-blue-600 text-3xl"></i>
-      </div>
-      <h1 class="text-3xl font-bold mb-2 text-blue-600">Spot AI Router</h1>
-      <p class="text-gray-600">The smartest way to find the perfect AI tool</p>
-    </div>
-
-    <div class="relative mb-4">
-      <textarea 
-        id="prompt" 
-        rows="5" 
-        placeholder="Type your question or task here..." 
-        class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm transition-all duration-200 resize-none"
-      ></textarea>
-    </div>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #8b5cf6;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --gray: #64748b;
+      --success: #10b981;
+    }
     
-    <button onclick="routePrompt()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition-colors">
-      <i class="fas fa-paper-plane mr-2"></i> Find Best AI Tool
-    </button>
-
-    <div id="result" class="mt-8 p-6 bg-white rounded-xl shadow-lg hidden">
-      <div class="flex items-start">
-        <div class="bg-blue-100 p-2 rounded-lg mr-3">
-          <i class="fas fa-route text-blue-600"></i>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    body {
+      background-color: #f1f5f9;
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    
+    header {
+      background: linear-gradient(120deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo-icon {
+      font-size: 28px;
+      background: rgba(255, 255, 255, 0.2);
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .logo-text {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      position: relative;
+    }
+    
+    .logo-text::after {
+      content: "AI Router";
+      position: absolute;
+      bottom: -2px;
+      right: -100px;
+      font-size: 14px;
+      font-weight: 400;
+      opacity: 0.8;
+    }
+    
+    .tagline {
+      font-size: 16px;
+      opacity: 0.9;
+      max-width: 300px;
+      text-align: right;
+      line-height: 1.5;
+    }
+    
+    .main-content {
+      padding: 32px;
+    }
+    
+    .input-section {
+      margin-bottom: 32px;
+    }
+    
+    .examples {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+    
+    .examples h3 {
+      font-size: 15px;
+      color: var(--gray);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .examples-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    
+    .example-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .example-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    
+    .example-card .icon {
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+    
+    .input-container {
+      position: relative;
+    }
+    
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 16px;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    .char-count {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      color: var(--gray);
+    }
+    
+    .submit-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      transition: background 0.2s;
+      margin-top: 16px;
+    }
+    
+    .submit-btn:hover {
+      background: var(--primary-dark);
+    }
+    
+    .result-section {
+      display: none;
+      margin-top: 32px;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+    }
+    
+    .result-header {
+      padding: 20px 24px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .result-content {
+      padding: 24px;
+    }
+    
+    .tool-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .tool-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: #dbeafe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+    
+    .tool-details h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    
+    .tool-details p {
+      color: var(--gray);
+      line-height: 1.6;
+    }
+    
+    .confidence-meter {
+      margin: 24px 0;
+    }
+    
+    .meter-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--gray);
+    }
+    
+    .meter-bar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .meter-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--success), #3b82f6);
+      width: 0;
+      transition: width 1s ease;
+      border-radius: 4px;
+    }
+    
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    
+    .action-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .primary-action {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
+    
+    .primary-action:hover {
+      background: var(--primary-dark);
+    }
+    
+    .secondary-action {
+      background: white;
+      color: var(--dark);
+      border: 1px solid #cbd5e1;
+    }
+    
+    .secondary-action:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+    
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .category-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    
+    .category-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .category-icon {
+      font-size: 24px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+    }
+    
+    .category-card h4 {
+      margin-bottom: 6px;
+    }
+    
+    .category-card p {
+      font-size: 14px;
+      color: var(--gray);
+    }
+    
+    .tech { background: #dbeafe; color: #2563eb; }
+    .research { background: #ede9fe; color: #8b5cf6; }
+    .creative { background: #fce7f3; color: #ec4899; }
+    .math { background: #dcfce7; color: #10b981; }
+    .business { background: #ffedd5; color: #f97316; }
+    .general { background: #e0f2fe; color: #0ea5e9; }
+    
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--gray);
+      font-size: 14px;
+      margin-top: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        margin-top: 10px;
+      }
+      
+      header {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+      }
+      
+      .logo-text::after {
+        display: none;
+      }
+      
+      .tagline {
+        text-align: center;
+        max-width: 100%;
+      }
+      
+      .examples-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .categories {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      }
+      
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fas fa-route"></i>
         </div>
-        <div>
-          <h2 class="text-xl font-semibold mb-1">Recommended Tool:</h2>
-          <div id="routeTo" class="text-lg font-medium text-blue-600 mb-2"></div>
-          <div id="reasoning" class="text-gray-600 mb-4"></div>
-          <a id="externalLink" href="#" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
-            <i class="fas fa-external-link-alt mr-2"></i> Go to Tool
-          </a>
+        <div class="logo-text">Spot</div>
+      </div>
+      <div class="tagline">
+        Advanced AI routing to the perfect tool for any task
+      </div>
+    </header>
+    
+    <div class="main-content">
+      <div class="input-section">
+        <h2>What would you like to accomplish?</h2>
+        <p class="description">Enter your question or task and Spot will find the ideal AI solution</p>
+        
+        <div class="input-container">
+          <textarea id="prompt" placeholder="Examples: 
+- Debug this Python code
+- Explain quantum physics simply
+- Find research papers on AI ethics
+- Write a poem about the ocean
+- Solve this calculus problem"></textarea>
+          <div class="char-count" id="charCount">0/2000</div>
+        </div>
+        
+        <button class="submit-btn" onclick="routePrompt()">
+          <i class="fas fa-paper-plane"></i> Find Best AI Tool
+        </button>
+        
+        <div class="examples">
+          <h3><i class="fas fa-lightbulb"></i> Try these examples</h3>
+          <div class="examples-grid">
+            <div class="example-card" onclick="useExample('Optimize this React component for better performance')">
+              <div class="icon"><i class="fas fa-code"></i></div>
+              Optimize React component
+            </div>
+            <div class="example-card" onclick="useExample('Summarize latest research on LLMs with sources')">
+              <div class="icon"><i class="fas fa-book"></i></div>
+              Summarize LLM research
+            </div>
+            <div class="example-card" onclick="useExample('Write a sci-fi story about AI consciousness')">
+              <div class="icon"><i class="fas fa-pen"></i></div>
+              Sci-fi story about AI
+            </div>
+            <div class="example-card" onclick="useExample('Solve this calculus problem: ∫(3x² + 2x - 5) dx')">
+              <div class="icon"><i class="fas fa-calculator"></i></div>
+              Solve calculus problem
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="result-section" id="result">
+        <div class="result-header">
+          <i class="fas fa-check-circle" style="color: var(--success);"></i>
+          <div>Found the perfect tool for your request</div>
+        </div>
+        
+        <div class="result-content">
+          <div class="tool-info">
+            <div class="tool-icon">
+              <i class="fab fa-wolfpack-battalion"></i>
+            </div>
+            <div class="tool-details">
+              <h3>Wolfram Alpha Pro</h3>
+              <p>Wolfram Alpha provides step-by-step solutions to advanced math problems with computational intelligence.</p>
+            </div>
+          </div>
+          
+          <div class="confidence-meter">
+            <div class="meter-header">
+              <span>Confidence Level</span>
+              <span id="confidenceValue">98%</span>
+            </div>
+            <div class="meter-bar">
+              <div class="meter-fill" id="confidenceBar"></div>
+            </div>
+          </div>
+          
+          <div class="actions">
+            <a href="#" class="action-btn primary-action" id="externalLink">
+              <i class="fas fa-external-link-alt"></i> Go to response
+            </a>
+            <button class="action-btn secondary-action" onclick="copyPrompt()">
+              <i class="fas fa-copy"></i> Copy prompt
+            </button>
+            <button class="action-btn secondary-action" onclick="showAlternatives()">
+              <i class="fas fa-random"></i> Alternatives
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="categories">
+        <div class="category-card">
+          <div class="category-icon tech">
+            <i class="fas fa-laptop-code"></i>
+          </div>
+          <h4>Technical/Code</h4>
+          <p>Cursor IDE, GitHub Copilot</p>
+        </div>
+        
+        <div class="category-card">
+          <div class="category-icon research">
+            <i class="fas fa-search"></i>
+          </div>
+          <h4>Research</h4>
+          <p>Perplexity Pro, Elicit</p>
+        </div>
+        
+        <div class="category-card">
+          <div class="category-icon creative">
+            <i class="fas fa-paint-brush"></i>
+          </div>
+          <h4>Creative Writing</h4>
+          <p>Claude 3, Sudowrite</p>
+        </div>
+        
+        <div class="category-card">
+          <div class="category-icon math">
+            <i class="fas fa-calculator"></i>
+          </div>
+          <h4>Math/Logic</h4>
+          <p>Wolfram Alpha, Symbolab</p>
+        </div>
+        
+        <div class="category-card">
+          <div class="category-icon business">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h4>Business</h4>
+          <p>BloombergGPT, Claude 3</p>
+        </div>
+        
+        <div class="category-card">
+          <div class="category-icon general">
+            <i class="fas fa-comments"></i>
+          </div>
+          <h4>General Knowledge</h4>
+          <p>GPT-4 Turbo, Claude 3</p>
         </div>
       </div>
     </div>
   </div>
+  
+  <footer>
+    <p>Spot AI Router v2.0 — Advanced AI Routing System</p>
+    <p>Not affiliated with any AI providers</p>
+  </footer>
 
   <script>
-    // Smart routing logic - considers multiple dimensions
+    // Initialize character counter
+    const promptTextarea = document.getElementById('prompt');
+    const charCount = document.getElementById('charCount');
+    
+    promptTextarea.addEventListener('input', () => {
+      const count = promptTextarea.value.length;
+      charCount.textContent = `${count}/2000`;
+    });
+    
+    // Example usage
+    function useExample(text) {
+      promptTextarea.value = text;
+      promptTextarea.dispatchEvent(new Event('input'));
+    }
+    
+    // Copy prompt
+    function copyPrompt() {
+      navigator.clipboard.writeText(promptTextarea.value).then(() => {
+        alert("Prompt copied to clipboard!");
+      });
+    }
+    
+    // Show alternatives (simplified)
+    function showAlternatives() {
+      alert("Alternative tools would be displayed here in a full implementation.\n\nFor this request, alternatives might include:\n- Symbolab\n- Mathway\n- Cymath");
+    }
+    
+    // Route prompt
+    function routePrompt() {
+      const prompt = promptTextarea.value.trim();
+      if (!prompt) {
+        alert("Please enter your question first!");
+        return;
+      }
+      
+      // Get the result element
+      const resultSection = document.getElementById('result');
+      
+      // Analyze the prompt
+      const { tool, reason, url } = analyzePrompt(prompt);
+      
+      // Update the UI
+      document.querySelector('.tool-details h3').textContent = tool;
+      document.querySelector('.tool-details p').textContent = reason;
+      document.getElementById('externalLink').href = url;
+      
+      // Set tool-specific icon
+      const toolIcon = document.querySelector('.tool-icon i');
+      if (tool.includes("Wolfram")) {
+        toolIcon.className = "fab fa-wolfpack-battalion";
+      } else if (tool.includes("Cursor")) {
+        toolIcon.className = "fas fa-code";
+      } else if (tool.includes("Perplexity") || tool.includes("Elicit")) {
+        toolIcon.className = "fas fa-search";
+      } else if (tool.includes("Claude") || tool.includes("Sudowrite")) {
+        toolIcon.className = "fas fa-pen";
+      } else if (tool.includes("GitHub")) {
+        toolIcon.className = "fab fa-github";
+      } else {
+        toolIcon.className = "fas fa-robot";
+      }
+      
+      // Show the result section
+      resultSection.style.display = 'block';
+      
+      // Animate confidence bar
+      const confidenceBar = document.getElementById('confidenceBar');
+      const confidenceValue = document.getElementById('confidenceValue');
+      let width = 0;
+      const targetWidth = 98; // confidence percentage
+      const interval = setInterval(() => {
+        if (width >= targetWidth) {
+          clearInterval(interval);
+        } else {
+          width++;
+          confidenceBar.style.width = width + '%';
+          confidenceValue.textContent = width + '%';
+        }
+      }, 15);
+    }
+    
+    // Smart prompt analysis with multi-tier routing
     function analyzePrompt(prompt) {
       const lowerPrompt = prompt.toLowerCase();
       
-      // 1. Coding/Technical Questions
-      if (/(code|programming|debug|fix|error|syntax|algorithm)/i.test(prompt)) {
-        if (/(error|bug|fix|exception)/i.test(prompt)) {
+      // Technical/Code Questions
+      if (/(code|programming|script|algorithm|function|method|class|variable)/i.test(lowerPrompt)) {
+        // Debugging specific errors
+        if (/(error|bug|fix|issue|exception|traceback)/i.test(lowerPrompt)) {
           return {
             tool: "Cursor IDE",
-            reason: "Best for debugging with direct code analysis",
-            url: "https://www.cursor.com"
+            reason: "Best for debugging with direct code analysis and context awareness",
+            url: "https://cursor.com"
           };
         }
-        return {
-          tool: "GitHub Copilot",
-          reason: "Ideal for coding assistance and autocomplete",
-          url: "https://github.com/features/copilot"
-        };
+        // Code optimization
+        else if (/(optimiz|improve|efficient|performance|speed up)/i.test(lowerPrompt)) {
+          return {
+            tool: "GitHub Copilot X",
+            reason: "Provides advanced code optimization suggestions with full repository context",
+            url: "https://github.com/features/copilot"
+          };
+        }
+        // General coding help
+        else {
+          return {
+            tool: "Phind (Developer Mode)",
+            reason: "Specializes in developer questions with code examples and best practices",
+            url: "https://phind.com"
+          };
+        }
       }
       
-      // 2. Research/Information
-      if (/(research|study|paper|article|source)/i.test(prompt)) {
-        return {
-          tool: "Perplexity Pro",
-          reason: "Excellent for finding and summarizing reliable sources",
-          url: `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}`
-        };
+      // Research/Sources Needed
+      else if (/(research|study|paper|article|source|reference|citation|journal)/i.test(lowerPrompt)) {
+        // Academic/scientific research
+        if (/(academic|scientific|peer-reviewed|journal)/i.test(lowerPrompt)) {
+          return {
+            tool: "Elicit AI",
+            reason: "Specializes in finding and summarizing academic papers with proper citations",
+            url: "https://elicit.com"
+          };
+        }
+        // General research
+        else {
+          return {
+            tool: "Perplexity Pro",
+            reason: "Finds and synthesizes information from high-quality web sources",
+            url: "https://perplexity.ai"
+          };
+        }
       }
       
-      // 3. Creative Writing
-      if (/(write|story|poem|creative|script)/i.test(prompt)) {
-        return {
-          tool: "Claude 3",
-          reason: "Superior for creative writing and storytelling",
-          url: "https://claude.ai"
-        };
+      // Creative Writing
+      else if (/(write|create|story|poem|song|script|narrative|fiction|plot)/i.test(lowerPrompt)) {
+        // Poetry/lyrical content
+        if (/(poem|poetry|song|lyric|rhyme|verse)/i.test(lowerPrompt)) {
+          return {
+            tool: "Claude 3 Opus",
+            reason: "Produces nuanced and creative lyrical content with excellent flow",
+            url: "https://claude.ai"
+          };
+        }
+        // Long-form content
+        else if (/(story|novel|chapter|book|narrative)/i.test(lowerPrompt)) {
+          return {
+            tool: "Sudowrite",
+            reason: "Specializes in long-form creative writing with advanced storytelling features",
+            url: "https://sudowrite.com"
+          };
+        }
+        // General creative
+        else {
+          return {
+            tool: "GPT-4 Turbo",
+            reason: "Provides excellent creative writing with large context window",
+            url: "https://chat.openai.com"
+          };
+        }
       }
       
-      // 4. Math/Logic
-      if (/(math|calculate|solve|equation|formula)/i.test(prompt)) {
-        return {
-          tool: "Wolfram Alpha",
-          reason: "The best for mathematical computations",
-          url: `https://www.wolframalpha.com/input?i=${encodeURIComponent(prompt)}`
-        };
+      // Math/Logic Problems
+      else if (/(math|calculate|solve|equation|formula|theorem|proof|logic|puzzle)/i.test(lowerPrompt)) {
+        // Advanced math
+        if (/(calculus|linear algebra|differential|integral|matrix)/i.test(lowerPrompt)) {
+          return {
+            tool: "Wolfram Alpha Pro",
+            reason: "Provides step-by-step solutions to advanced math problems",
+            url: "https://wolframalpha.com"
+          };
+        }
+        // General math
+        else {
+          return {
+            tool: "Symbolab",
+            reason: "Offers detailed step-by-step solutions to math problems",
+            url: "https://symbolab.com"
+          };
+        }
       }
       
-      // 5. Business/Professional
-      if (/(business|market|strategy|financial|analysis)/i.test(prompt)) {
+      // Business/Professional
+      else if (/(business|market|strategy|analysis|financial|startup|invest|funding)/i.test(lowerPrompt)) {
         return {
-          tool: "Claude 3",
-          reason: "Great for business analysis and strategy",
-          url: "https://claude.ai"
+          tool: "BloombergGPT",
+          reason: "Specializes in financial and market analysis with professional insights",
+          url: "https://bloomberg.com"
         };
       }
       
       // Default - General Knowledge
       return {
         tool: "GPT-4 Turbo",
-        reason: "Best all-purpose AI for general questions",
-        url: `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`
+        reason: "Handles general queries with excellent reasoning and knowledge",
+        url: "https://chat.openai.com"
       };
-    }
-
-    function routePrompt() {
-      const prompt = document.getElementById("prompt").value.trim();
-      if (!prompt) {
-        alert("Please enter your question first!");
-        return;
-      }
-
-      const result = analyzePrompt(prompt);
-      
-      document.getElementById("routeTo").textContent = result.tool;
-      document.getElementById("reasoning").textContent = result.reason;
-      document.getElementById("externalLink").href = result.url;
-      document.getElementById("result").classList.remove("hidden");
     }
   </script>
 </body>
