@@ -3,128 +3,303 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spot — Smart AI Router</title>
+  <title>Spot — AI Nexus Router</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-purple-50 text-gray-900 min-h-screen flex flex-col items-center justify-center p-4">
-  <div class="w-full max-w-3xl">
-    <div class="text-center mb-8">
-      <div class="inline-block bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-2xl shadow-lg mb-4">
-        <i class="fas fa-robot text-white text-4xl"></i>
+<body class="bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+  <div class="w-full max-w-4xl">
+    <!-- Header with animated gradient -->
+    <div class="text-center mb-10">
+      <div class="inline-block bg-gradient-to-r from-blue-400 to-purple-600 p-4 rounded-3xl shadow-2xl mb-5 animate-pulse">
+        <i class="fas fa-network-wired text-white text-5xl"></i>
       </div>
-      <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Spot AI Router</h1>
-      <p class="text-lg text-gray-600 max-w-lg mx-auto">Your intelligent gateway to the best AI tools for any task. Just ask, and Spot will find the perfect assistant.</p>
+      <h1 class="text-5xl font-extrabold mb-3 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">SPOT NEXUS</h1>
+      <p class="text-xl text-gray-300 max-w-2xl mx-auto">The world's first <span class="font-semibold text-blue-300">intent-aware</span> AI routing system</p>
     </div>
 
-    <div class="relative mb-4">
+    <!-- Main input with floating label -->
+    <div class="relative mb-6 group">
+      <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl opacity-20 group-hover:opacity-30 transition-all duration-300 blur-sm"></div>
       <textarea 
         id="prompt" 
-        rows="5" 
-        placeholder="What would you like to know? Examples:
-• 'Explain quantum computing like I'm 5'
-• 'Debug this Python code for me'
-• 'Find recent research on AI ethics'
-• 'Help me write a short story about robots'" 
-        class="w-full p-5 rounded-2xl border-2 border-gray-200 focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-blue-400 shadow-sm transition-all duration-200 resize-none"
+        rows="6"
+        class="relative w-full p-6 text-lg rounded-2xl bg-gray-800 border-2 border-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 shadow-xl transition-all duration-300 resize-none placeholder-transparent peer"
+        placeholder=" "
       ></textarea>
-      <div class="absolute bottom-4 right-4 flex items-center">
-        <span id="charCount" class="text-gray-400 text-sm mr-3">0/2000</span>
-        <button id="clearBtn" class="text-gray-400 hover:text-gray-600 transition-colors">
+      <label class="absolute left-4 -top-3 px-2 bg-gray-900 text-blue-300 text-sm font-medium transition-all duration-200 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-6 peer-placeholder-shown:left-6 peer-focus:-top-3 peer-focus:text-blue-300 peer-focus:text-sm peer-focus:bg-gray-900">
+        Your challenge or question...
+      </label>
+      <div class="absolute bottom-4 right-4 flex items-center space-x-3">
+        <span id="charCount" class="text-gray-400 text-sm">0/4000</span>
+        <button id="micBtn" class="text-gray-400 hover:text-blue-400 transition-colors" title="Voice input">
+          <i class="fas fa-microphone text-xl"></i>
+        </button>
+        <button id="clearBtn" class="text-gray-400 hover:text-red-400 transition-colors" title="Clear">
           <i class="fas fa-times-circle text-xl"></i>
         </button>
       </div>
     </div>
-    
-    <div class="flex flex-col sm:flex-row gap-3">
-      <button onclick="routePrompt()" class="flex-1 py-3 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center">
-        <i class="fas fa-paper-plane mr-2"></i> Ask Spot
-      </button>
-      <button onclick="showExamples()" class="py-3 px-6 bg-white border-2 border-gray-200 hover:border-blue-400 text-gray-700 font-semibold rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center">
-        <i class="fas fa-lightbulb mr-2"></i> Examples
-      </button>
-    </div>
 
-    <div id="result" class="mt-8 p-6 bg-white rounded-2xl shadow-lg hidden animate__animated animate__fadeIn">
-      <div class="flex items-start">
-        <div class="flex-shrink-0 bg-blue-100 p-3 rounded-lg">
-          <i class="fas fa-route text-blue-600 text-2xl"></i>
-        </div>
-        <div class="ml-4">
-          <h2 class="text-xl font-semibold mb-1">Best AI for your query:</h2>
-          <div id="routeTo" class="text-lg font-medium text-blue-600 mb-3"></div>
-          <p id="reasoning" class="text-gray-600 mb-4"></p>
-          <div class="flex flex-wrap gap-3">
-            <a id="externalLink" href="#" target="_blank" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow transition-colors duration-200 flex items-center">
-              <i class="fas fa-external-link-alt mr-2"></i> Go to response
-            </a>
-            <button onclick="copyPrompt()" id="copyBtn" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg shadow transition-colors duration-200 flex items-center">
-              <i class="fas fa-copy mr-2"></i> Copy prompt
-            </button>
+    <!-- Advanced options dropdown -->
+    <div class="mb-6">
+      <button id="optionsToggle" class="flex items-center text-gray-300 hover:text-blue-300 transition-colors">
+        <i class="fas fa-cog mr-2"></i> Advanced routing options
+        <i class="fas fa-chevron-down ml-1 text-xs transition-transform duration-200"></i>
+      </button>
+      <div id="optionsPanel" class="mt-3 p-4 bg-gray-800 rounded-xl hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Response Depth</label>
+            <select id="depthSelect" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-200">
+              <option value="quick">Quick Answer</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="deep">Deep Analysis</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Content Type</label>
+            <select id="contentType" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-200">
+              <option value="auto" selected>Auto-detect</option>
+              <option value="technical">Technical</option>
+              <option value="creative">Creative</option>
+              <option value="academic">Academic</option>
+              <option value="professional">Professional</option>
+            </select>
           </div>
         </div>
       </div>
     </div>
 
-    <div id="examplesModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
-      <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate__animated animate__zoomIn">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-bold">Example Prompts</h3>
-          <button onclick="hideExamples()" class="text-gray-400 hover:text-gray-600">
+    <!-- Action buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 mb-10">
+      <button onclick="analyzePrompt()" class="flex-1 py-4 px-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2">
+        <i class="fas fa-brain"></i>
+        <span>Analyze Intent</span>
+      </button>
+      <button onclick="showExamples()" class="py-4 px-6 bg-gray-800 border border-gray-700 hover:border-blue-500 text-gray-200 font-semibold rounded-xl shadow hover:shadow-md transition-all duration-300 flex items-center justify-center space-x-2">
+        <i class="fas fa-lightbulb"></i>
+        <span>Examples</span>
+      </button>
+    </div>
+
+    <!-- Results section -->
+    <div id="result" class="hidden animate__animated animate__fadeIn">
+      <div class="p-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-2xl">
+        <div class="bg-gray-900 rounded-xl p-6">
+          <div class="flex items-start mb-6">
+            <div class="flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-600 p-3 rounded-xl">
+              <i class="fas fa-route text-white text-2xl"></i>
+            </div>
+            <div class="ml-4">
+              <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Optimal Solution Path</h2>
+              <div id="confidenceMeter" class="h-2 bg-gray-700 rounded-full mt-2 mb-4 overflow-hidden">
+                <div id="confidenceBar" class="h-full bg-gradient-to-r from-green-400 to-blue-500" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Phase 1: Understanding -->
+            <div class="bg-gray-800 p-4 rounded-xl border-l-4 border-blue-500">
+              <div class="flex items-center mb-3">
+                <div class="bg-blue-500/20 p-2 rounded-lg mr-3">
+                  <i class="fas fa-search text-blue-400"></i>
+                </div>
+                <h3 class="font-bold text-blue-300">Understanding</h3>
+              </div>
+              <div id="intentAnalysis" class="text-sm text-gray-300">
+                Analyzing your request...
+              </div>
+            </div>
+
+            <!-- Phase 2: Strategy -->
+            <div class="bg-gray-800 p-4 rounded-xl border-l-4 border-purple-500">
+              <div class="flex items-center mb-3">
+                <div class="bg-purple-500/20 p-2 rounded-lg mr-3">
+                  <i class="fas fa-chess text-purple-400"></i>
+                </div>
+                <h3 class="font-bold text-purple-300">Strategy</h3>
+              </div>
+              <div id="solutionStrategy" class="text-sm text-gray-300">
+                Developing solution approach...
+              </div>
+            </div>
+
+            <!-- Phase 3: Execution -->
+            <div class="bg-gray-800 p-4 rounded-xl border-l-4 border-green-500">
+              <div class="flex items-center mb-3">
+                <div class="bg-green-500/20 p-2 rounded-lg mr-3">
+                  <i class="fas fa-rocket text-green-400"></i>
+                </div>
+                <h3 class="font-bold text-green-300">Execution</h3>
+              </div>
+              <div id="executionPlan" class="text-sm text-gray-300">
+                Preparing implementation...
+              </div>
+            </div>
+          </div>
+
+          <!-- Final recommendation -->
+          <div class="mt-8 p-5 bg-gray-800/50 border border-gray-700 rounded-xl">
+            <div class="flex items-center mb-4">
+              <div class="bg-gradient-to-br from-yellow-500 to-orange-500 p-2 rounded-lg mr-3">
+                <i class="fas fa-star text-white"></i>
+              </div>
+              <h3 class="text-xl font-bold text-yellow-300">Recommended Action</h3>
+            </div>
+            <div id="finalRecommendation" class="flex flex-col md:flex-row items-start md:items-center justify-between">
+              <div class="mb-4 md:mb-0">
+                <div id="routeTo" class="text-lg font-bold text-white mb-1"></div>
+                <div id="reasoning" class="text-sm text-gray-300"></div>
+              </div>
+              <div class="flex space-x-3">
+                <a id="externalLink" href="#" target="_blank" class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg shadow transition-all duration-300 flex items-center">
+                  <i class="fas fa-external-link-alt mr-2"></i> Execute
+                </a>
+                <button onclick="showAlternatives()" id="altBtn" class="px-5 py-2.5 bg-gray-700 hover:bg-gray-600 text-gray-200 font-medium rounded-lg shadow transition-colors duration-300 flex items-center">
+                  <i class="fas fa-random mr-2"></i> Alternatives
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Examples modal -->
+    <div id="examplesModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+      <div class="bg-gray-800 rounded-2xl shadow-xl max-w-2xl w-full p-6 animate__animated animate__zoomIn border border-gray-700">
+        <div class="flex justify-between items-center mb-5 pb-3 border-b border-gray-700">
+          <h3 class="text-xl font-bold text-blue-300">Example Use Cases</h3>
+          <button onclick="hideExamples()" class="text-gray-400 hover:text-white p-1">
             <i class="fas fa-times text-xl"></i>
           </button>
         </div>
-        <div class="space-y-3">
-          <div class="p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors" onclick="useExample('How can I optimize this React component for better performance?')">
-            <p class="font-medium text-blue-700">Code Optimization</p>
-            <p class="text-sm text-gray-600">"How can I optimize this React component for better performance?"</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Technical examples -->
+          <div class="group">
+            <div class="p-4 bg-gray-900 rounded-xl border border-gray-700 hover:border-blue-500 transition-all cursor-pointer" onclick="useExample('Optimize this React component for better rendering performance and explain your changes step-by-step')">
+              <div class="flex items-center mb-2">
+                <div class="bg-blue-500/20 p-2 rounded-lg mr-3">
+                  <i class="fas fa-code text-blue-400"></i>
+                </div>
+                <h4 class="font-bold text-blue-300 group-hover:text-blue-200">Technical</h4>
+              </div>
+              <p class="text-sm text-gray-300">"Optimize this React component for better rendering performance and explain your changes step-by-step"</p>
+            </div>
           </div>
-          <div class="p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100 transition-colors" onclick="useExample('Summarize the latest research on large language models with sources')">
-            <p class="font-medium text-purple-700">Research Summary</p>
-            <p class="text-sm text-gray-600">"Summarize the latest research on large language models with sources"</p>
+          
+          <!-- Research examples -->
+          <div class="group">
+            <div class="p-4 bg-gray-900 rounded-xl border border-gray-700 hover:border-purple-500 transition-all cursor-pointer" onclick="useExample('Compare the latest research papers on transformer architectures, focusing on computational efficiency improvements in the last 2 years')">
+              <div class="flex items-center mb-2">
+                <div class="bg-purple-500/20 p-2 rounded-lg mr-3">
+                  <i class="fas fa-book-open text-purple-400"></i>
+                </div>
+                <h4 class="font-bold text-purple-300 group-hover:text-purple-200">Research</h4>
+              </div>
+              <p class="text-sm text-gray-300">"Compare the latest research papers on transformer architectures, focusing on computational efficiency improvements"</p>
+            </div>
           </div>
-          <div class="p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition-colors" onclick="useExample('Write a short story about a detective in 22nd century Tokyo')">
-            <p class="font-medium text-green-700">Creative Writing</p>
-            <p class="text-sm text-gray-600">"Write a short story about a detective in 22nd century Tokyo"</p>
+          
+          <!-- Creative examples -->
+          <div class="group">
+            <div class="p-4 bg-gray-900 rounded-xl border border-gray-700 hover:border-green-500 transition-all cursor-pointer" onclick="useExample('Write a sci-fi short story about a world where AI develops its own philosophy, written in the style of Ted Chiang')">
+              <div class="flex items-center mb-2">
+                <div class="bg-green-500/20 p-2 rounded-lg mr-3">
+                  <i class="fas fa-pen-fancy text-green-400"></i>
+                </div>
+                <h4 class="font-bold text-green-300 group-hover:text-green-200">Creative</h4>
+              </div>
+              <p class="text-sm text-gray-300">"Write a sci-fi short story about a world where AI develops its own philosophy"</p>
+            </div>
           </div>
-          <div class="p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors" onclick="useExample('Explain how neural networks work to a high school student')">
-            <p class="font-medium text-yellow-700">Education</p>
-            <p class="text-sm text-gray-600">"Explain how neural networks work to a high school student"</p>
+          
+          <!-- Business examples -->
+          <div class="group">
+            <div class="p-4 bg-gray-900 rounded-xl border border-gray-700 hover:border-yellow-500 transition-all cursor-pointer" onclick="useExample('Create a comprehensive market analysis for AI-powered coding assistants including current players, pricing models, and growth projections')">
+              <div class="flex items-center mb-2">
+                <div class="bg-yellow-500/20 p-2 rounded-lg mr-3">
+                  <i class="fas fa-chart-line text-yellow-400"></i>
+                </div>
+                <h4 class="font-bold text-yellow-300 group-hover:text-yellow-200">Business</h4>
+              </div>
+              <p class="text-sm text-gray-300">"Create a comprehensive market analysis for AI-powered coding assistants"</p>
+            </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alternatives modal -->
+    <div id="alternativesModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+      <div class="bg-gray-800 rounded-2xl shadow-xl max-w-2xl w-full p-6 animate__animated animate__zoomIn border border-gray-700">
+        <div class="flex justify-between items-center mb-5 pb-3 border-b border-gray-700">
+          <h3 class="text-xl font-bold text-purple-300">Alternative Solutions</h3>
+          <button onclick="hideAlternatives()" class="text-gray-400 hover:text-white p-1">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <div id="alternativesList" class="space-y-4">
+          <!-- Alternatives will be inserted here -->
         </div>
       </div>
     </div>
   </div>
 
   <footer class="mt-12 text-center text-gray-500 text-sm">
-    <p>Spot AI Router v1.1 · Not affiliated with any AI providers</p>
+    <p>SPOT NEXUS v2.0 — AI Routing Intelligence System</p>
   </footer>
 
   <script>
-    // Character counter
+    // DOM Elements
     const promptTextarea = document.getElementById('prompt');
     const charCount = document.getElementById('charCount');
+    const optionsToggle = document.getElementById('optionsToggle');
+    const optionsPanel = document.getElementById('optionsPanel');
+    const resultBox = document.getElementById('result');
+    const confidenceBar = document.getElementById('confidenceBar');
     
-    promptTextarea.addEventListener('input', () => {
-      const count = promptTextarea.value.length;
-      charCount.textContent = `${count}/2000`;
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set up character counter
+      promptTextarea.addEventListener('input', updateCharCount);
       
-      if (count > 1800) {
-        charCount.classList.add('text-red-500');
-      } else {
-        charCount.classList.remove('text-red-500');
-      }
+      // Set up options toggle
+      optionsToggle.addEventListener('click', () => {
+        optionsPanel.classList.toggle('hidden');
+        optionsToggle.querySelector('i:last-child').classList.toggle('rotate-180');
+      });
+      
+      // Set up mic button (placeholder for voice input)
+      document.getElementById('micBtn').addEventListener('click', () => {
+        alert('Voice input would be implemented in a production version');
+      });
+      
+      // Set up clear button
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        promptTextarea.value = '';
+        updateCharCount();
+        promptTextarea.focus();
+      });
+      
+      // Allow Enter to submit (but Shift+Enter for new line)
+      promptTextarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          analyzePrompt();
+        }
+      });
     });
     
-    // Clear button
-    document.getElementById('clearBtn').addEventListener('click', () => {
-      promptTextarea.value = '';
-      charCount.textContent = '0/2000';
-      charCount.classList.remove('text-red-500');
-    });
+    function updateCharCount() {
+      const count = promptTextarea.value.length;
+      charCount.textContent = `${count}/4000`;
+      charCount.className = `text-sm ${count > 3500 ? 'text-red-400' : 'text-gray-400'}`;
+    }
     
-    // Example prompts
     function showExamples() {
       document.getElementById('examplesModal').classList.remove('hidden');
     }
@@ -135,124 +310,332 @@
     
     function useExample(text) {
       promptTextarea.value = text;
-      promptTextarea.dispatchEvent(new Event('input'));
+      updateCharCount();
       hideExamples();
       promptTextarea.focus();
     }
     
-    // Copy prompt
-    function copyPrompt() {
-      const prompt = document.getElementById("prompt").value;
-      navigator.clipboard.writeText(prompt).then(() => {
-        const copyBtn = document.getElementById("copyBtn");
-        copyBtn.innerHTML = '<i class="fas fa-check mr-2"></i> Copied!';
-        copyBtn.classList.remove('bg-gray-100', 'hover:bg-gray-200');
-        copyBtn.classList.add('bg-green-100', 'hover:bg-green-200', 'text-green-700');
-        setTimeout(() => {
-          copyBtn.innerHTML = '<i class="fas fa-copy mr-2"></i> Copy prompt';
-          copyBtn.classList.remove('bg-green-100', 'hover:bg-green-200', 'text-green-700');
-          copyBtn.classList.add('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
-        }, 2000);
-      });
+    function showAlternatives() {
+      // In a real implementation, this would show actual alternatives
+      // For now, we'll simulate it
+      const alternativesList = document.getElementById('alternativesList');
+      alternativesList.innerHTML = `
+        <div class="p-4 bg-gray-900 rounded-xl border border-gray-700 hover:border-blue-500 transition-all">
+          <div class="flex items-center mb-2">
+            <div class="bg-blue-500/20 p-2 rounded-lg mr-3">
+              <i class="fas fa-robot text-blue-400"></i>
+            </div>
+            <h4 class="font-bold text-blue-300">GPT-4 Turbo (128k context)</h4>
+          </div>
+          <p class="text-sm text-gray-300 mb-3">Best for complex reasoning tasks requiring large context windows</p>
+          <button class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors">
+            Select this option
+          </button>
+        </div>
+        <div class="p-4 bg-gray-900 rounded-xl border border-gray-700 hover:border-purple-500 transition-all">
+          <div class="flex items-center mb-2">
+            <div class="bg-purple-500/20 p-2 rounded-lg mr-3">
+              <i class="fas fa-brain text-purple-400"></i>
+            </div>
+            <h4 class="font-bold text-purple-300">Claude 3 Opus</h4>
+          </div>
+          <p class="text-sm text-gray-300 mb-3">Best for analytical tasks requiring deep reasoning and long document analysis</p>
+          <button class="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-lg transition-colors">
+            Select this option
+          </button>
+        </div>
+        <div class="p-4 bg-gray-900 rounded-xl border border-gray-700 hover:border-green-500 transition-all">
+          <div class="flex items-center mb-2">
+            <div class="bg-green-500/20 p-2 rounded-lg mr-3">
+              <i class="fas fa-search text-green-400"></i>
+            </div>
+            <h4 class="font-bold text-green-300">Perplexity AI (with sources)</h4>
+          </div>
+          <p class="text-sm text-gray-300 mb-3">Best for research-oriented questions requiring citations and web sources</p>
+          <button class="px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors">
+            Select this option
+          </button>
+        </div>
+      `;
+      document.getElementById('alternativesModal').classList.remove('hidden');
     }
     
-    // Improved routing logic
-    function routePrompt() {
-      const prompt = document.getElementById("prompt").value.trim();
-      const routeTo = document.getElementById("routeTo");
-      const reasoning = document.getElementById("reasoning");
-      const resultBox = document.getElementById("result");
-      const link = document.getElementById("externalLink");
-
+    function hideAlternatives() {
+      document.getElementById('alternativesModal').classList.add('hidden');
+    }
+    
+    // Core analysis function
+    function analyzePrompt() {
+      const prompt = promptTextarea.value.trim();
       if (!prompt) {
-        alert("Please enter a prompt first!");
+        alert("Please enter your question or challenge first!");
         return;
       }
-
-      // Reset result box
+      
+      // Reset and show result box
       resultBox.classList.add('hidden');
-      
-      // Show loading state
-      routeTo.innerHTML = '<span class="animate-pulse">Analyzing your query...</span>';
-      reasoning.textContent = '';
-      resultBox.classList.remove('hidden');
-      
-      // Simulate analysis delay (in a real app, this would be an API call)
       setTimeout(() => {
-        const { destination, url, explanation } = analyzePrompt(prompt);
+        resultBox.classList.remove('hidden');
+      }, 50);
+      
+      // Simulate analysis phases
+      simulateAnalysis(prompt);
+    }
+    
+    function simulateAnalysis(prompt) {
+      // Phase 1: Understanding
+      document.getElementById('intentAnalysis').innerHTML = `<span class="animate-pulse">Detecting primary intent...</span>`;
+      document.getElementById('solutionStrategy').innerHTML = `<span class="animate-pulse">Waiting for understanding phase...</span>`;
+      document.getElementById('executionPlan').innerHTML = `<span class="animate-pulse">Waiting for strategy phase...</span>`;
+      
+      setTimeout(() => {
+        const intentResults = analyzeIntent(prompt);
+        document.getElementById('intentAnalysis').innerHTML = intentResults.analysis;
         
-        routeTo.textContent = destination;
-        reasoning.textContent = explanation;
-        link.href = url;
+        // Phase 2: Strategy
+        document.getElementById('solutionStrategy').innerHTML = `<span class="animate-pulse">Developing solution framework...</span>`;
         
-        // Add appropriate icon based on destination
-        let iconClass = 'fas fa-robot'; // default icon
-        if (destination.includes('Perplexity')) iconClass = 'fas fa-search';
-        if (destination.includes('Claude')) iconClass = 'fas fa-brain';
-        if (destination.includes('GPT')) iconClass = 'fas fa-comment-alt';
-        
-        routeTo.innerHTML = `<i class="${iconClass} mr-2"></i>${destination}`;
+        setTimeout(() => {
+          const strategyResults = developStrategy(prompt, intentResults);
+          document.getElementById('solutionStrategy').innerHTML = strategyResults.strategy;
+          
+          // Phase 3: Execution
+          document.getElementById('executionPlan').innerHTML = `<span class="animate-pulse">Finalizing implementation plan...</span>`;
+          
+          setTimeout(() => {
+            const executionResults = planExecution(prompt, intentResults, strategyResults);
+            document.getElementById('executionPlan').innerHTML = executionResults.plan;
+            
+            // Final recommendation
+            const recommendation = generateRecommendation(prompt, intentResults, strategyResults, executionResults);
+            document.getElementById('routeTo').textContent = recommendation.destination;
+            document.getElementById('reasoning').textContent = recommendation.reasoning;
+            document.getElementById('externalLink').href = recommendation.url;
+            
+            // Animate confidence meter
+            let confidence = 0;
+            const confidenceInterval = setInterval(() => {
+              confidence += 2;
+              confidenceBar.style.width = `${Math.min(confidence, recommendation.confidence)}%`;
+              if (confidence >= recommendation.confidence) clearInterval(confidenceInterval);
+            }, 20);
+            
+          }, 800);
+        }, 1000);
       }, 800);
     }
     
-    // Enhanced prompt analysis
-    function analyzePrompt(prompt) {
+    // Advanced analysis functions
+    function analyzeIntent(prompt) {
       const lowerPrompt = prompt.toLowerCase();
-      let destination, url, explanation;
+      let analysis = "";
+      let detectedIntent = "";
+      let complexity = "medium";
+      let entities = [];
       
-      // Coding/technical questions
-      if (/(code|bug|function|debug|javascript|python|react|optimiz|algorithm|syntax|error)/i.test(lowerPrompt)) {
-        destination = "Perplexity AI (Copilot)";
-        url = `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}&copilot=true`;
-        explanation = "This appears to be a technical/coding question. Perplexity's Copilot mode is great for debugging and code explanations with its ability to execute code snippets.";
+      // Detect intent categories
+      if (/(\bdebug|\berror|\bfix|\bissue|\bbug)/i.test(prompt)) {
+        detectedIntent = "Debugging/Problem Resolution";
+        analysis = "The prompt appears to be seeking help with resolving a technical issue or error.";
       } 
-      // Research/sources needed
-      else if (/(research|sources|latest|summary|studies|paper|article|journal|cite|reference)/i.test(lowerPrompt)) {
-        destination = "Perplexity AI";
-        url = `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}`;
-        explanation = "Your question seems to require sourced information. Perplexity excels at finding and summarizing information from reliable sources across the web.";
-      } 
-      // Creative writing
-      else if (/(story|idea|creative|plot|write|poem|song|script|narrative|fiction)/i.test(lowerPrompt)) {
-        destination = "GPT-4 (OpenRouter)";
-        url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
-        explanation = "This looks like a creative writing prompt. GPT-4 typically produces more imaginative and coherent creative content than other models.";
-      } 
-      // Long-form analysis
-      else if (/(analyze|summarize|document|context|lengthy|detailed|comprehensive|compare|contrast)/i.test(lowerPrompt)) {
-        destination = "Claude 3 (Poe)";
-        url = `https://poe.com/Claude-3`;
-        explanation = "For in-depth analysis or long document processing, Claude's 100K+ context window makes it ideal for complex reasoning tasks.";
-      } 
-      // General knowledge/explanation
-      else if (/(explain|what is|how does|who was|why does|define|meaning)/i.test(lowerPrompt)) {
-        destination = "GPT-3.5 (General Chat)";
-        url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
-        explanation = "This seems to be a general knowledge question. GPT-3.5 provides fast, accurate responses for common questions at no cost.";
+      else if (/(\boptimiz|\bimprove|\benhance|\befficient|\bperformance)/i.test(prompt)) {
+        detectedIntent = "Performance Optimization";
+        analysis = "This seems to be requesting improvements or optimizations to existing systems/code.";
       }
-      // Math/logic problems
-      else if (/(math|calculate|solve|equation|formula|theorem|proof|logic|puzzle)/i.test(lowerPrompt)) {
-        destination = "Wolfram Alpha";
-        url = `https://www.wolframalpha.com/input?i=${encodeURIComponent(prompt)}`;
-        explanation = "Your question appears to be mathematical or computational. Wolfram Alpha specializes in solving math problems and performing calculations.";
+      else if (/(\bexplain|\bhow does|\bwhat is|\bdefine)/i.test(prompt)) {
+        detectedIntent = "Explanation/Education";
+        analysis = "The request is asking for an explanation or educational overview of a concept.";
       }
-      // Default case
+      else if (/(\bwrite|\bcreate|\bgenerate|\bstory|\bpoem|\bcontent)/i.test(prompt) && 
+               !/(\bcode|\bscript|\balgorithm)/i.test(prompt)) {
+        detectedIntent = "Content Generation";
+        analysis = "This appears to be a request for creative content generation.";
+      }
+      else if (/(\banalyz|\bcompare|\bevaluat|\bassess)/i.test(prompt)) {
+        detectedIntent = "Comparative Analysis";
+        analysis = "The prompt is asking for analysis or comparison between different elements.";
+      }
+      else if (/(\bresearch|\bsources|\bstudies|\bpapers)/i.test(prompt)) {
+        detectedIntent = "Research/Information Gathering";
+        analysis = "This seems to require gathering and synthesizing information from multiple sources.";
+      }
       else {
-        destination = "GPT-4 (General Chat)";
-        url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
-        explanation = "This seems to be a general question. GPT-4 provides well-rounded answers for most types of queries.";
+        detectedIntent = "General Inquiry";
+        analysis = "The prompt appears to be a general question without a specific category.";
       }
       
-      return { destination, url, explanation };
+      // Detect complexity
+      const wordCount = prompt.split(/\s+/).length;
+      if (wordCount > 50 || /(\bcomplex|\bin-depth|\bdetailed)/i.test(prompt)) {
+        complexity = "high";
+      } else if (wordCount < 10) {
+        complexity = "low";
+      }
+      
+      // Detect entities (simplified)
+      if (/(\breact|\bvue|\bangular)/i.test(prompt)) entities.push("Frontend Framework");
+      if (/(\bpython|\bjavascript|\bjava|\bc\+\+)/i.test(prompt)) entities.push("Programming Language");
+      if (/(\bai|\bmachine learning|\bneural network)/i.test(prompt)) entities.push("AI/ML");
+      if (/(\bbusiness|\bmarket|\bstrategy)/i.test(prompt)) entities.push("Business");
+      if (/(\bmath|\bcalculus|\balgebra)/i.test(prompt)) entities.push("Mathematics");
+      
+      return {
+        analysis: `
+          <div class="space-y-2">
+            <p><span class="font-semibold text-blue-300">Primary Intent:</span> ${detectedIntent}</p>
+            <p><span class="font-semibold text-blue-300">Complexity:</span> ${complexity.charAt(0).toUpperCase() + complexity.slice(1)}</p>
+            ${entities.length ? `<p><span class="font-semibold text-blue-300">Entities:</span> ${entities.join(', ')}</p>` : ''}
+            <p class="pt-2 text-xs text-gray-400">Intent confidence: ${Math.floor(Math.random() * 30) + 70}%</p>
+          </div>
+        `,
+        intent: detectedIntent,
+        complexity,
+        entities
+      };
     }
     
-    // Allow pressing Enter with Shift to submit
-    promptTextarea.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        routePrompt();
+    function developStrategy(prompt, intentData) {
+      let strategy = "";
+      const { intent, complexity } = intentData;
+      
+      switch(intent) {
+        case "Debugging/Problem Resolution":
+          strategy = `
+            <p>1. <span class="text-purple-300">Code Analysis:</span> Parse any provided code snippets</p>
+            <p>2. <span class="text-purple-300">Error Identification:</span> Detect potential error sources</p>
+            <p>3. <span class="text-purple-300">Solution Generation:</span> Propose fixes with explanations</p>
+          `;
+          break;
+        case "Performance Optimization":
+          strategy = `
+            <p>1. <span class="text-purple-300">Benchmarking:</span> Establish performance baseline</p>
+            <p>2. <span class="text-purple-300">Bottleneck Analysis:</span> Identify optimization targets</p>
+            <p>3. <span class="text-purple-300">Solution Testing:</span> Validate improvements</p>
+          `;
+          break;
+        case "Explanation/Education":
+          strategy = `
+            <p>1. <span class="text-purple-300">Concept Breakdown:</span> Deconstruct into fundamental parts</p>
+            <p>2. <span class="text-purple-300">Analogies:</span> Create relatable comparisons</p>
+            <p>3. <span class="text-purple-300">Examples:</span> Provide practical illustrations</p>
+          `;
+          break;
+        case "Content Generation":
+          strategy = `
+            <p>1. <span class="text-purple-300">Style Analysis:</span> Determine desired tone/voice</p>
+            <p>2. <span class="text-purple-300">Structure Planning:</span> Outline narrative flow</p>
+            <p>3. <span class="text-purple-300">Iterative Refinement:</span> Develop through drafts</p>
+          `;
+          break;
+        case "Comparative Analysis":
+          strategy = `
+            <p>1. <span class="text-purple-300">Parameter Definition:</span> Establish comparison metrics</p>
+            <p>2. <span class="text-purple-300">Data Collection:</span> Gather comparable attributes</p>
+            <p>3. <span class="text-purple-300">Evaluation Framework:</span> Systematically compare</p>
+          `;
+          break;
+        case "Research/Information Gathering":
+          strategy = `
+            <p>1. <span class="text-purple-300">Source Identification:</span> Locate authoritative references</p>
+            <p>2. <span class="text-purple-300">Information Synthesis:</span> Combine key findings</p>
+            <p>3. <span class="text-purple-300">Citation Integration:</span> Properly attribute sources</p>
+          `;
+          break;
+        default:
+          strategy = `
+            <p>1. <span class="text-purple-300">Query Interpretation:</span> Clarify ambiguous elements</p>
+            <p>2. <span class="text-purple-300">Knowledge Retrieval:</span> Access relevant information</p>
+            <p>3. <span class="text-purple-300">Response Formulation:</span> Construct coherent answer</p>
+          `;
       }
-    });
+      
+      if (complexity === "high") {
+        strategy += `<p class="mt-2 text-xs text-purple-300">Note: Applying advanced analysis for complex query</p>`;
+      }
+      
+      return { strategy };
+    }
+    
+    function planExecution(prompt, intentData, strategyData) {
+      let plan = "";
+      const { intent, entities } = intentData;
+      
+      if (entities.includes("Programming Language")) {
+        plan = `
+          <p>1. <span class="text-green-300">Syntax Validation:</span> Check code structure</p>
+          <p>2. <span class="text-green-300">Sandbox Execution:</span> Test in isolated environment</p>
+          <p>3. <span class="text-green-300">Result Verification:</span> Confirm expected outcomes</p>
+        `;
+      }
+      else if (intent === "Research/Information Gathering") {
+        plan = `
+          <p>1. <span class="text-green-300">Academic Search:</span> Query scholarly databases</p>
+          <p>2. <span class="text-green-300">Source Verification:</span> Check credibility</p>
+          <p>3. <span class="text-green-300">Cross-Referencing:</span> Validate with multiple sources</p>
+        `;
+      }
+      else if (intent === "Content Generation") {
+        plan = `
+          <p>1. <span class="text-green-300">Creative Ideation:</span> Generate multiple concepts</p>
+          <p>2. <span class="text-green-300">Draft Composition:</span> Develop initial version</p>
+          <p>3. <span class="text-green-300">Stylistic Refinement:</span> Polish language and flow</p>
+        `;
+      }
+      else {
+        plan = `
+          <p>1. <span class="text-green-300">Task Segmentation:</span> Break into sub-tasks</p>
+          <p>2. <span class="text-green-300">Resource Allocation:</span> Assign appropriate tools</p>
+          <p>3. <span class="text-green-300">Quality Assurance:</span> Validate final output</p>
+        `;
+      }
+      
+      return { plan };
+    }
+    
+    function generateRecommendation(prompt, intentData, strategyData, executionData) {
+      const { intent, complexity, entities } = intentData;
+      let destination, url, reasoning, confidence;
+      
+      // Determine the best tool based on analysis
+      if (entities.includes("Programming Language") || intent === "Debugging/Problem Resolution") {
+        destination = "GitHub Copilot + Perplexity Pro";
+        url = `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}&copilot=true`;
+        reasoning = "The technical nature of this query benefits from both GitHub Copilot's code understanding and Perplexity's ability to reference documentation and solutions.";
+        confidence = 92;
+      }
+      else if (intent === "Research/Information Gathering" || intent === "Comparative Analysis") {
+        destination = "Perplexity Pro (with Academic Sources)";
+        url = `https://www.perplexity.ai/search?q=${encodeURIComponent(prompt)}`;
+        reasoning = "For research-intensive queries, Perplexity's ability to find and cite authoritative sources makes it the ideal choice.";
+        confidence = 88;
+      }
+      else if (intent === "Content Generation" && complexity === "high") {
+        destination = "Claude 3 Opus (via Poe)";
+        url = `https://poe.com/Claude-3`;
+        reasoning = "Claude 3 excels at long-form creative content generation with coherent narrative structure and stylistic consistency.";
+        confidence = 85;
+      }
+      else if (intent === "Explanation/Education" && entities.includes("Mathematics")) {
+        destination = "Wolfram Alpha + GPT-4";
+        url = `https://www.wolframalpha.com/input?i=${encodeURIComponent(prompt)}`;
+        reasoning = "Mathematical explanations benefit from Wolfram's computational capabilities combined with GPT-4's explanatory skills.";
+        confidence = 90;
+      }
+      else if (complexity === "high") {
+        destination = "GPT-4 Turbo (128k context)";
+        url = `https://chat.openai.com/?model=gpt-4-turbo&q=${encodeURIComponent(prompt)}`;
+        reasoning = "For complex queries requiring large context windows and advanced reasoning, GPT-4 Turbo provides the most comprehensive solution.";
+        confidence = 87;
+      }
+      else {
+        destination = "GPT-4 (Balanced)";
+        url = `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`;
+        reasoning = "This general-purpose query will be handled well by GPT-4's balanced capabilities for most common use cases.";
+        confidence = 82;
+      }
+      
+      return { destination, url, reasoning, confidence };
+    }
   </script>
 </body>
 </html>
